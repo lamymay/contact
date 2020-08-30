@@ -1,13 +1,33 @@
 apply plugin: 'com.android.application'
 
+
+/*
+主Model app --> build.gradle
+N个副Model --> build.gradle
+1. 统一性
+2.便于管理
+3.版本管理
+
+
+Gradle 构建三个性能指标
+全量变异:  全部变编译
+代码增量编译: 对于修改过的代码进行编译
+资源增量变异 修改res下面的资源文件时候进行编译
+
+发布App到软件市场: 多渠道打包/全部打包
+调试: 只需要debug包即可
+
+
+*/
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.1"
 
     defaultConfig {
         applicationId "com.arc.contact"
-        minSdkVersion 25
-        targetSdkVersion 30
+        minSdkVersion rootProject.ext.android["minSdkVersion"]
+//        targetSdkVersion 30
+        targetSdkVersion   rootProject.ext.android["targetSdkVersion"]
         versionCode 1
         versionName "1.0"
 
@@ -15,10 +35,15 @@ android {
     }
 
     buildTypes {
+//        debug {
+//            //自定义 gradle常量
+//            BuildCacheConfiguration("boolean", "LOG_DEBUG", "true")
+//        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
     }
 }
 

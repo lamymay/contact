@@ -1,0 +1,19 @@
+//本文件是是什么? 自定义的配置文件
+//如何使用? 在root中引入 方可使用
+
+ext {
+    //配置 Android
+    android = [
+            minSdkVersion   : 25,
+            targetSdkVersion: 30,
+            versionCode     : 1,
+            versionName     : "1.0"
+    ]
+
+    //配置依赖
+    dependencies = [
+
+    ]
+}
+
+//如何定义gradle常量

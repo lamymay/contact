@@ -656,7 +656,9 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     //========================== 第一个测试 END================================
-
+//    public static void main(String[] args) {
+//        if(BuildConfig.DEBUG.)
+//    }
 }
 
 
