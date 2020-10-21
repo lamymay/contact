@@ -158,4 +158,12 @@ ionic
 
 
 https://www.bilibili.com/video/BV1Rt411e76H?p=2
+
+
 https://developer.android.google.cn/training/contacts-provider/retrieve-names
+
+
+
+https://www.bilibili.com/video/BV1FV41167Fi?p=69
+
+https://github.com/yipianfengye/android-zxingLibrary

@@ -93,12 +93,32 @@ public class MainActivity extends AppCompatActivity {
     private void initContact() {
         // 写几个按钮，对于不同按钮分别绑定crud是事件
         syncButton = findViewById(R.id.syncBtn);
-        saveButton = findViewById(R.id.saveBtn);
-        deleteButton = findViewById(R.id.deleteBtn);
-        updateButton = findViewById(R.id.updateBtn);
-        getButton = findViewById(R.id.getOneBtn);
-        listAllButton = findViewById(R.id.listAllBtn);
+//        saveButton = findViewById(R.id.saveBtn);
+//        deleteButton = findViewById(R.id.deleteBtn);
+//        updateButton = findViewById(R.id.updateBtn);
+//        getButton = findViewById(R.id.getOneBtn);
+//        listAllButton = findViewById(R.id.listAllBtn);
+
+
         outputText = findViewById(R.id.outputText);
+
+        //todo 打开一个页面要求用户输入
+        String name = input1.getText().toString();
+        System.out.println(name);
+        Toast.makeText(MainActivity.this, "输入文本name\n" + name  , Toast.LENGTH_SHORT).show();
+
+        if("save".equals(name)){
+            saveButton=syncButton;
+        } else if ("del".equals(name)) {
+            deleteButton=syncButton;
+        }else if ("update".equals(name)) {
+            updateButton=syncButton;
+        }else if ("get".equals(name)) {
+            getButton=syncButton;
+        }
+        else if ("list".equals(name)) {
+            listAllButton=syncButton;
+        }
 
         //绑定事件
 
@@ -173,6 +193,22 @@ public class MainActivity extends AppCompatActivity {
                 //todo 打开一个页面要求用户输入
                 String name = input1.getText().toString();
                 System.out.println(name);
+//                Toast.makeText(MainActivity.this, "输入文本name\n" + name  , Toast.LENGTH_SHORT).show();
+//
+//                if("save".equals(name)){
+//                    saveButton=syncButton;
+//                } else if ("del".equals(name)) {
+//                    deleteButton=syncButton;
+//                }else if ("update".equals(name)) {
+//                    updateButton=syncButton;
+//                }else if ("get".equals(name)) {
+//                    getButton=syncButton;
+//                }
+//                 else if ("list".equals(name)) {
+//                    listAllButton=syncButton;
+//                }
+
+
                 AppContact localContact = ContactTool.getContactByDisplayNameWithAllPhone(name, MainActivity.this);
                 //todo 显示结果
                 String toJSONString = JSON.toJSONString(localContact);
