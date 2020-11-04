@@ -7,12 +7,15 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.arc.contact.model.AppContact;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 联系人 CRUD 服务
@@ -77,10 +80,10 @@ public class ContactTool {
                 //todo 组装联系人数据
                 AppContact user = new AppContact();
                 Integer id = Integer.valueOf(idSting);
-                user.setContactId(id);
+                user.setDeviceContactId(id);
                 user.setDisplayName(display_name);
-                user.setCellphone(phoneNumber);
-                user.setHasPhoneNumber(has_phone_number);
+
+                user.appendPhone(has_phone_number);
 
                 nameMap.put(user.getDisplayName(), user);
                 map.put("" + id, user);
@@ -155,7 +158,7 @@ public class ContactTool {
                 temp.put(has_phone_number, has_phone_number);
                 //todo 组装数据
                 AppContact user = new AppContact();
-                user.setContactId(id);
+                user.setDeviceContactId(id);
                 user.setDisplayName(display_name);
                 System.out.println("联系人 id=" + id + user);
                 map.put("" + id, user);
@@ -286,7 +289,8 @@ public class ContactTool {
             throw new RuntimeException("null update");
         }
         int id = user.getId();
-        String phone = user.getCellphone();
+        String phone =  user.getPhones().get(0);
+
 
         Uri uri = Uri.parse("content://com.android.contacts/data");//对data表的所有数据操作
         ContentResolver resolver = context.getContentResolver();
@@ -324,7 +328,7 @@ public class ContactTool {
                 String phone = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 phone = phone.replace("-", "");
                 phone = phone.replace(" ", "");
-                temp.setCellphone(phone);
+                temp.appendPhone(phone);
             }
 
             //获取联系人备注信息
@@ -338,7 +342,7 @@ public class ContactTool {
                 do {
                     String note = noteCursor.getString(noteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Nickname.NAME));
-                    temp.note = note;
+                    temp.setNote(note);
                     Log.i("note:", note);
                 } while (noteCursor.moveToNext());
             }
@@ -504,7 +508,6 @@ public class ContactTool {
         }
         System.out.println("##################### DELETE END " + (System.currentTimeMillis() - t1) + "ms #########################");
     }
-
 
 
 }

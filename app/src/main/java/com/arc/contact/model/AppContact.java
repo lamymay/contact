@@ -1,5 +1,7 @@
 package com.arc.contact.model;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,60 +16,49 @@ public class AppContact {
 
     private Integer id;//后台统中的id是主键
     private Long userId;//后台统唯一的用户id
-    private Integer contactId;//是每个通讯录中的id，不唯一，每个设备上的通讯录id各自独立
+
+    private Integer deviceContactId;//是每个通讯录中的id，不唯一，每个设备上的通讯录id各自独立
 
 
-    public String lastname;//英文中的人名姓氏
-    public String givenName;//名字 = given name  firstname
-    private String name;//名称= lastname + firstname
+    private String familyName = "";//英文中的人名姓氏 lastName/family name
+    private String givenName = System.currentTimeMillis() + "";//名字 = given name / firstName
+    private String name = familyName + givenName;//中文习惯姓在前名在后则名= familyName + givenName
+
     @Deprecated
-    public String nickname;//昵称 等效displayName
-    public String displayName;
+    private String displayName;//昵称 等效 displayName
+
     private List<String> phones; //电话号码集合
     private List<String> emails;
     private List<String> ims;
-
-    public String jsonString;//预留jsonString
-    public Integer state;
-    public String note;
 
     private String photo;
     private String organization;
     private String postalAddress;
     private String groupMembership;
 
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 
-    @Deprecated
-    public String cellphone;
-
-    @Deprecated
-    private String telephone;
-
-    @Deprecated
-    private String email;
-
-    @Deprecated
-    private String im;
-
-
-
-    @Deprecated
-    public String hasPhoneNumber;
-
-//    private LocalDateTime createTime;
-//    private LocalDateTime updateTime;
-
+    private Integer state;
+    private String note;
+    private String jsonString;//预留jsonString
 
 
     public AppContact() {
     }
 
-    public AppContact(String displayName, String phoneNumber) {
-        this.displayName = displayName;
-        this.cellphone = phoneNumber;
-    }
-    //=====================================
+    public AppContact(String familyName, String givenName, List<String> phones, List<String> emails) {
+        this.givenName = givenName;
+        this.familyName = familyName;
+        this.phones = phones;
+        this.emails = emails;
 
+        this.name = this.familyName + this.givenName;
+        this.displayName = this.name;
+
+    }
+
+    //******************
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -89,20 +80,20 @@ public class AppContact {
         this.userId = userId;
     }
 
-    public Integer getContactId() {
-        return contactId;
+    public Integer getDeviceContactId() {
+        return deviceContactId;
     }
 
-    public void setContactId(Integer contactId) {
-        this.contactId = contactId;
+    public void setDeviceContactId(Integer deviceContactId) {
+        this.deviceContactId = deviceContactId;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getFamilyName() {
+        return familyName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
     public String getGivenName() {
@@ -121,12 +112,12 @@ public class AppContact {
         this.name = name;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public List<String> getPhones() {
@@ -151,30 +142,6 @@ public class AppContact {
 
     public void setIms(List<String> ims) {
         this.ims = ims;
-    }
-
-    public String getJsonString() {
-        return jsonString;
-    }
-
-    public void setJsonString(String jsonString) {
-        this.jsonString = jsonString;
-    }
-
-    public Integer getState() {
-        return state;
-    }
-
-    public void setState(Integer state) {
-        this.state = state;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
     }
 
     public String getPhoto() {
@@ -209,80 +176,52 @@ public class AppContact {
         this.groupMembership = groupMembership;
     }
 
-    public String getCellphone() {
-        return cellphone;
+    public LocalDateTime getCreateAt() {
+        return createAt;
     }
 
-    public void setCellphone(String cellphone) {
-        this.cellphone = cellphone;
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 
-    public String getEmail() {
-        return email;
+    public Integer getState() {
+        return state;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setState(Integer state) {
+        this.state = state;
     }
 
-    public String getIm() {
-        return im;
+    public String getNote() {
+        return note;
     }
 
-    public void setIm(String im) {
-        this.im = im;
+    public void setNote(String note) {
+        this.note = note;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getJsonString() {
+        return jsonString;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
     }
 
-    public String getHasPhoneNumber() {
-        return hasPhoneNumber;
-    }
-
-    public void setHasPhoneNumber(String hasPhoneNumber) {
-        this.hasPhoneNumber = hasPhoneNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "AppContact{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", contactId=" + contactId +
-                ", lastname='" + lastname + '\'' +
-                ", givenName='" + givenName + '\'' +
-                ", name='" + name + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", displayName='" + displayName + '\'' +
-                ", phones=" + phones +
-                ", emails=" + emails +
-                ", ims=" + ims +
-                ", jsonString='" + jsonString + '\'' +
-                ", state=" + state +
-                ", note='" + note + '\'' +
-                ", photo='" + photo + '\'' +
-                ", organization='" + organization + '\'' +
-                ", postalAddress='" + postalAddress + '\'' +
-                ", groupMembership='" + groupMembership + '\'' +
-                ", cellphone='" + cellphone + '\'' +
-                ", telephone='" + telephone + '\'' +
-                ", email='" + email + '\'' +
-                ", im='" + im + '\'' +
-                ", hasPhoneNumber='" + hasPhoneNumber + '\'' +
-                '}';
+    public void appendPhone(String phoneNumber) {
+        List<String> existPhones = this.phones;
+        if (existPhones == null) {
+            existPhones = new ArrayList<>();
+        }
+        existPhones.add(phoneNumber);
+        this.phones = existPhones;
     }
 }

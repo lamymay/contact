@@ -8,9 +8,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.arc.contact.model.AppContact;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -30,25 +33,23 @@ public class ContactDataProvider {
      * @return 返回联系人数据列表
      */
     public List<AppContact> getContactList() {
+
+        return listMockDataList();
+    }
+
+    public List<AppContact> listMockDataList() {
+
+        //名字 = lastName + firstName
+        String familyName = "叶";
+        String givenName = System.currentTimeMillis() + "";
+
+        List<String> phones = Arrays.asList("18674192462", "021-1564");
+        List<String> emails = Arrays.asList("lamymay@outlook.com", "2320158601@qq.com");
+
+        AppContact contact1 = new AppContact(familyName,givenName,phones,emails);
+        AppContact contact2 = new AppContact("张","三",Arrays.asList("13674192462"),Arrays.asList("123456@qq.com"));
+
         ArrayList<AppContact> contacts = new ArrayList<>(16);
-        AppContact contact1 = new AppContact();
-        contact1.setDisplayName("王五");
-        contact1.setLastname("王");
-        contact1.setGivenName("五");
-
-        List<String> phones = Arrays.asList("18642124", "021-1564");
-        contact1.setPhones(phones);
-        contact1.setEmail("lamymay@outlook.com");
-
-
-        AppContact contact2 = new AppContact();
-        contact2.setDisplayName("刘亦菲");
-        contact2.setLastname("刘");
-        contact2.setGivenName("亦菲");
-        List<String> phones2 = Arrays.asList("177421277", "021-15645454");
-        contact2.setEmail("235615645@qq.com");
-        contact2.setPhones(phones2);
-
         contacts.add(contact1);
         contacts.add(contact2);
         return contacts;
@@ -81,7 +82,7 @@ public class ContactDataProvider {
 
             // 联系人名字
             contentValues.put(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, appContact.getGivenName());
-            contentValues.put(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, appContact.getLastname());
+            contentValues.put(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, appContact.getFamilyName());
 //            contentValues.put(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, appContact.getDisplayName());
 
             //contentValues.put("raw_contact_id", contact_id);
@@ -100,7 +101,7 @@ public class ContactDataProvider {
             contentValues.put(ContactsContract.Data.RAW_CONTACT_ID, contact_id);
 
             // 联系人的电话号码
-             contentValues.put(ContactsContract.CommonDataKinds.Phone.NUMBER, appContact.getPhones().get(0));
+            contentValues.put(ContactsContract.CommonDataKinds.Phone.NUMBER, appContact.getPhones().get(0));
 
 //            List<String> phones = appContact.getPhones();
 //            if (phones != null && phones.size() > 0) {
@@ -124,14 +125,14 @@ public class ContactDataProvider {
 
 
             // 联系人的Email地址
-            contentValues.put(ContactsContract.CommonDataKinds.Email.ADDRESS, appContact.getEmail());
+            contentValues.put(ContactsContract.CommonDataKinds.Email.ADDRESS,  appContact.getEmails().get(0));
 
             contentValues.put(ContactsContract.Data.RAW_CONTACT_ID, contact_id);
 
             // 向联系人Email URI添加Email数据
             context.getContentResolver().insert(ContactsContract.Data.CONTENT_URI, contentValues);
 
-            Toast.makeText(context, "save"+appContact.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "save" + appContact.toString(), Toast.LENGTH_SHORT).show();
             System.out.println("########################saveOne######################");
 
             return true;
@@ -158,7 +159,11 @@ public class ContactDataProvider {
             name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
             //组装联系人数据
-            AppContact user = new AppContact(name, phoneNumber);
+            AppContact user = new AppContact(   );
+            user.setName(name);
+            ArrayList<String> phoneNumbers = new ArrayList<>();
+            phoneNumbers.add(phoneNumber);
+            user.setPhones(phoneNumbers);
             users.add(user);
         }
 
@@ -196,3 +201,87 @@ dataX 对应的 类型
             public static final int TYPE_ASSISTANT = 19;
             public static final int TYPE_MMS = 20;
 **/
+
+//    /**
+//     * 请转换为此项
+//     *
+//     * @return
+//     */
+//    private List<AppContact> listAll3() {
+//        Toast.makeText(MainActivity.this, "listAll3", Toast.LENGTH_SHORT).show();
+//        List<AppContact> rows = new ArrayList<>();
+//        //1、访问raw_contacts表 uri = content://com.android.contacts/contacts
+////        Uri uri = Uri.parse("content://com.android.contacts/contacts");
+//        //Uri uri = ContactsContract.Contacts.CONTENT_URI;
+//
+//        ContentResolver resolver = MainActivity.this.getContentResolver();
+//
+//        //2、获得_id属性
+//        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI,
+//                new String[]{ContactsContract.Contacts.Data._ID},
+//                null,
+//                null,
+//                null);
+//        while (cursor.moveToNext()) {
+//            //========================================================
+//
+//            //获得id并且在data中寻找数据
+//            int contactId = cursor.getInt(0);
+//            AppContact contact = new AppContact();
+//            List<String> phoneNumbers = new ArrayList<>();
+//            List<String> emails = new ArrayList<>();
+//
+//            contact.setContactId(contactId);
+//
+////            int phoneCount = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+//
+//            //data1存储各个记录的总数据，MIMETYPE 存放记录的类型，如电话、email等
+//            Cursor cursor2 = resolver.query(
+//                    Uri.parse("content://com.android.contacts/contacts/" + contactId + "/data"),
+//                    new String[]{ContactsContract.Contacts.Data.DATA1, ContactsContract.Contacts.Data.MIMETYPE},
+//                    null,
+//                    null,
+//                    null);
+//            while (cursor2.moveToNext()) {
+//                String data = cursor2.getString(cursor2.getColumnIndex("data1"));
+//                if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/name")) {       //如果是名字
+//                    contact.setDisplayName(data);
+//
+//                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/nickname")) {  //如果是昵称
+//                    contact.setNickname(data);
+//
+//                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/phone_v2")) {  //如果是电话
+//                    data = data.replaceAll("//s", "");
+//                    data = data.replaceAll("-", "");
+//
+//                    phoneNumbers.add(data);
+//                    contact.setCellphone(data);
+//
+//                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/email_v2")) {  //如果是email
+//                    emails.add(data);
+//                    contact.setEmail(data);
+//
+//                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/postal-address_v2")) { //如果是地址
+//                    contact.setPostalAddress(data);
+//                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/organization")) {  //如果是组织
+//                    contact.setOrganization(data);
+//
+//                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/photo")) {  //如果是照片
+//                    //appContact.setPhoto(data);
+//                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/group_membership")) {  //如果是组织关系
+//                    contact.setGroupMembership(data);
+//
+//                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/im")) {  //如果是即时通讯IM
+//                    contact.setIm(data);
+//                }
+//                contact.setPhones(phoneNumbers);
+//                contact.setEmails(emails);
+//            }
+//            //            Log.i("Contacts", str);
+//            rows.add(contact);
+//        }
+//        //输出显示
+//        String string = JSON.toJSONString(rows);
+//        outputText.setText(string);
+//        return rows;
+//    }

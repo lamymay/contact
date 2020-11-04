@@ -13,14 +13,20 @@ import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import com.alibaba.fastjson.JSON;
 import com.arc.contact.util.ContactDataProvider;
 import com.arc.contact.model.AppContact;
@@ -45,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
 
     //输入框
     private EditText input1;
+
+    Button syncButton = null;
+//    Button saveButton = null;
+//    Button deleteButton = null;
+//    Button updateButton = null;
+//    Button getButton = null;
+//    Button listAllButton = null;
 
     //private static final String TAG = "Contact_Test";
 
@@ -71,23 +84,33 @@ public class MainActivity extends AppCompatActivity {
         // 第一个测试
         //listAllContactAndShowByTextViewExample1();
 
-        // 第二个测试-- 测试对联系人 CRUD
+        // 第二个测试 查询全部数据
         setContentView(R.layout.activity_contact);
+
+
+        Toast.makeText(MainActivity.this, "即将init", Toast.LENGTH_SHORT).show();
 
         //初始化
         initContact();
 
-        input1 = findViewById(R.id.input1);
+        input1 = findViewById(R.id.inputCommand);
 
     }
 
 
-    Button syncButton = null;
-    Button saveButton = null;
-    Button deleteButton = null;
-    Button updateButton = null;
-    Button getButton = null;
-    Button listAllButton = null;
+    /**
+     * 第一个测试，渲染一个
+     */
+    private void listAllContactAndShowInTextView() {
+        //加载渲染主图
+        setContentView(R.layout.activity_test_textview);
+        //测试方法
+        //UserService.listAllNumber(this);
+        ListView userListView = (ListView) findViewById(R.id.listView1);
+        BaseAdapter adapter = new MyContactListViewAdapter(ContactDataProvider.listAllNumber(this), this);
+        userListView.setAdapter(adapter);
+    }
+
 
     //init layout  with method
     private void initContact() {
@@ -105,20 +128,20 @@ public class MainActivity extends AppCompatActivity {
         //todo 打开一个页面要求用户输入
         String name = input1.getText().toString();
         System.out.println(name);
-        Toast.makeText(MainActivity.this, "输入文本name\n" + name  , Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "输入文本name\n" + name, Toast.LENGTH_SHORT).show();
 
-        if("save".equals(name)){
-            saveButton=syncButton;
-        } else if ("del".equals(name)) {
-            deleteButton=syncButton;
-        }else if ("update".equals(name)) {
-            updateButton=syncButton;
-        }else if ("get".equals(name)) {
-            getButton=syncButton;
-        }
-        else if ("list".equals(name)) {
-            listAllButton=syncButton;
-        }
+//        if("save".equals(name)){
+//            saveButton=syncButton;
+//        } else if ("del".equals(name)) {
+//            deleteButton=syncButton;
+//        }else if ("update".equals(name)) {
+//            updateButton=syncButton;
+//        }else if ("get".equals(name)) {
+//            getButton=syncButton;
+//        }
+//        else if ("list".equals(name)) {
+//            listAllButton=syncButton;
+//        }
 
         //绑定事件
 
@@ -133,175 +156,39 @@ public class MainActivity extends AppCompatActivity {
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    sync();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    //todo error
-                }
-                //MyContact
+                sync();
             }
         });
-
-        //save
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE};
-//                addPermissByPermissionList(MainActivity.this, permissions, PERMISSION_CONTACT);
-
-                List<AppContact> contacts = dataProvider.getContactList();
-                if (contacts == null && contacts.size() == 0) {
-                    Toast.makeText(MainActivity.this, "无可以保存的数据", Toast.LENGTH_SHORT).show();
-                }
-                for (AppContact contact : contacts) {
-                    boolean save = dataProvider.save(contact, MainActivity.this);
-                }
-            }
-
-
-        });
-
-        //delete
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    ContactTool.delete(MainActivity.this);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    //todo error
-                }
-            }
-        });
-
-        //update
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ContactTool.update(MainActivity.this, null);
-            }
-        });
-
-        //getOne
-        getButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //     * 1、打开一个页面要求用户输入
-                //     * 2、参数点击搜素后查询数据
-                //     * 3、显示结果
-                //todo 打开一个页面要求用户输入
-                String name = input1.getText().toString();
-                System.out.println(name);
-//                Toast.makeText(MainActivity.this, "输入文本name\n" + name  , Toast.LENGTH_SHORT).show();
-//
-//                if("save".equals(name)){
-//                    saveButton=syncButton;
-//                } else if ("del".equals(name)) {
-//                    deleteButton=syncButton;
-//                }else if ("update".equals(name)) {
-//                    updateButton=syncButton;
-//                }else if ("get".equals(name)) {
-//                    getButton=syncButton;
-//                }
-//                 else if ("list".equals(name)) {
-//                    listAllButton=syncButton;
-//                }
-
-
-                AppContact localContact = ContactTool.getContactByDisplayNameWithAllPhone(name, MainActivity.this);
-                //todo 显示结果
-                String toJSONString = JSON.toJSONString(localContact);
-                Toast.makeText(MainActivity.this, "根据参数name\n" + name + "查询到的结果=" + toJSONString, Toast.LENGTH_SHORT).show();
-                outputText.setText(toJSONString);
-                System.out.println(localContact);
-            }
-        });
-
-        //listAll
-        listAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listAll3();
-            }
-        });
-
 
     }
-    //------------------------------
-
-
-    private void checkRWContactsPermission() {
-        //获取listview
-        //适配器是为了将构造函数中把要适配的数据传入 当前提供的数据是字符串 所以泛型为String 第二个参数是子项的布局
-        //判断用户是否已经授权给我们了 如果没有，调用下面方法向用户申请授权，之后系统就会弹出一个权限申请的对话框
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, 1);
-        }
-//        else {
-//            readContacts();
-//        }
-    }
-
-//    //调用并获取联系人信息
-//    private void readContacts() {
-//        Cursor cursor = null;
-//        try {
-//
-//            cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-//                    null, null, null, null);
-//            if (cursor != null) {
-//                while (cursor.moveToNext()) {
-//                    String displayName = cursor.getString(cursor.getColumnIndex(
-//                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-//                    String number = cursor.getString(cursor.getColumnIndex(
-//                            ContactsContract.CommonDataKinds.Phone.NUMBER));
-//                    contactsList.add(displayName + "\n" + number);
-//                }
-//                //刷新
-//                adapter.notifyDataSetChanged();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (cursor != null) {
-//                cursor.close();
-//            }
-//        }
-//    }
 
 
     //------------------------------
 
 
     /**
-     * 合并后处理      【暂时使用该方案，且有server完成】
+     *
      */
     private void sync() {
-        //1、listAll
-        //2、send data to server and wait the server response
-        //3、get the server response success than remove local database
-        //2、save batch data to local database
-        //2、render result success
+        try {
+            // 1 listAll
+            // 2 save batch data to local database
 
+            // 1、list
+            List<AppContact> contacts = dataProvider.listMockDataList();
+            verifyContacts(contacts);
 
-        List<AppContact> contacts = dataProvider.getContactList();
-        if (contacts == null && contacts.size() == 0) {
-            Toast.makeText(MainActivity.this, "无可以保存的数据", Toast.LENGTH_SHORT).show();
-        }
-
-        int insertTotal = 0;
-        for (AppContact contact : contacts) {
-            boolean save = dataProvider.save(contact, MainActivity.this);
-            if (save) {
-                insertTotal = insertTotal + 1;
+            int insertSuccess = 0;
+            for (AppContact contact : contacts) {
+                boolean save = dataProvider.save(contact, MainActivity.this);
+                if (save) {
+                    insertSuccess = insertSuccess + 1;
+                }
             }
-        }
 
-        Toast.makeText(MainActivity.this, "保存成功" + insertTotal, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "保存成功" + insertSuccess, Toast.LENGTH_SHORT).show();
 
 
-//        //1、list
 //        List<AppContact> contacts = listAll3();
 //
 //        //                UNION_SET(1, "取并集"),
@@ -428,6 +315,19 @@ public class MainActivity extends AppCompatActivity {
 //        System.out.println(resultMap.get("response"));
 //        System.out.println("################## END ######################");
 //        System.out.println("################## END ######################");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //todo error
+        }
+
+    }
+
+    private void verifyContacts(List<AppContact> contacts) {
+        if (contacts == null && contacts.size() == 0) {
+            Toast.makeText(MainActivity.this, "无可以保存的数据", Toast.LENGTH_SHORT).show();
+            throw new RuntimeException("本设备上无可以同步的数据");
+        }
     }
 
     /**
@@ -451,89 +351,6 @@ public class MainActivity extends AppCompatActivity {
     //========================== 第2个测试 START================================
 
 
-    /**
-     * 请转换为此项
-     *
-     * @return
-     */
-    private List<AppContact> listAll3() {
-        Toast.makeText(MainActivity.this, "listAll3", Toast.LENGTH_SHORT).show();
-        List<AppContact> rows = new ArrayList<>();
-        //1、访问raw_contacts表 uri = content://com.android.contacts/contacts
-//        Uri uri = Uri.parse("content://com.android.contacts/contacts");
-        //Uri uri = ContactsContract.Contacts.CONTENT_URI;
-
-        ContentResolver resolver = MainActivity.this.getContentResolver();
-
-        //2、获得_id属性
-        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI,
-                new String[]{ContactsContract.Contacts.Data._ID},
-                null,
-                null,
-                null);
-        while (cursor.moveToNext()) {
-            //========================================================
-
-            //获得id并且在data中寻找数据
-            int contactId = cursor.getInt(0);
-            AppContact contact = new AppContact();
-            List<String> phoneNumbers = new ArrayList<>();
-            List<String> emails = new ArrayList<>();
-
-            contact.setContactId(contactId);
-
-//            int phoneCount = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-
-            //data1存储各个记录的总数据，MIMETYPE 存放记录的类型，如电话、email等
-            Cursor cursor2 = resolver.query(
-                    Uri.parse("content://com.android.contacts/contacts/" + contactId + "/data"),
-                    new String[]{ContactsContract.Contacts.Data.DATA1, ContactsContract.Contacts.Data.MIMETYPE},
-                    null,
-                    null,
-                    null);
-            while (cursor2.moveToNext()) {
-                String data = cursor2.getString(cursor2.getColumnIndex("data1"));
-                if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/name")) {       //如果是名字
-                    contact.setDisplayName(data);
-
-                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/nickname")) {  //如果是昵称
-                    contact.setNickname(data);
-
-                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/phone_v2")) {  //如果是电话
-                    data = data.replaceAll("//s", "");
-                    data = data.replaceAll("-", "");
-
-                    phoneNumbers.add(data);
-                    contact.setCellphone(data);
-
-                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/email_v2")) {  //如果是email
-                    emails.add(data);
-                    contact.setEmail(data);
-
-                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/postal-address_v2")) { //如果是地址
-                    contact.setPostalAddress(data);
-                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/organization")) {  //如果是组织
-                    contact.setOrganization(data);
-
-                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/photo")) {  //如果是照片
-                    //appContact.setPhoto(data);
-                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/group_membership")) {  //如果是组织关系
-                    contact.setGroupMembership(data);
-
-                } else if (cursor2.getString(cursor2.getColumnIndex("mimetype")).equals("vnd.android.cursor.item/im")) {  //如果是即时通讯IM
-                    contact.setIm(data);
-                }
-                contact.setPhones(phoneNumbers);
-                contact.setEmails(emails);
-            }
-            //            Log.i("Contacts", str);
-            rows.add(contact);
-        }
-        //输出显示
-        String string = JSON.toJSONString(rows);
-        outputText.setText(string);
-        return rows;
-    }
 
 
 //    private void listAll() {
@@ -619,82 +436,11 @@ public class MainActivity extends AppCompatActivity {
                     }).show();
         }
     }
-
-    /**
-     * 动态权限
-     */
-    public void addPermissonByPermissionList(Activity activity, String[] permissions, int request) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   //Android 6.0开始的动态权限，这里进行版本判断
-            ArrayList<String> mPermissionList = new ArrayList<>();
-            for (int i = 0; i < permissions.length; i++) {
-                if (ContextCompat.checkSelfPermission(activity, permissions[i])
-                        != PackageManager.PERMISSION_GRANTED) {
-                    mPermissionList.add(permissions[i]);
-                }
-            }
-            if (mPermissionList.isEmpty()) {  //非初次进入App且已授权
-                //   showContacts();
-                Toast.makeText(this, "已授权", Toast.LENGTH_SHORT).show();
-            } else {
-                //请求权限方法
-                String[] permissionsNew = mPermissionList.toArray(new String[mPermissionList.size()]);//将List转为数组
-                ActivityCompat.requestPermissions(activity, permissionsNew, request); //这个触发下面onRequestPermissionsResult这个回调
-            }
-        }
-    }
-
-    //动态权限
-    private void listAll() {
-        Toast.makeText(MainActivity.this, "listAll", Toast.LENGTH_SHORT).show();
-        String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE};
-
-        //addPermissionsByPermissionList(MainActivity.this, permissions, PERMISSION_CONTACT);
-        //动态权限     public void addPermissionsByPermissionList(Activity activity, String[] permissions, int request) {
-        //ro.build.version.sdk  == 26?  [Build.VERSION_CODES.M即26]
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   //Android 6.0开始的动态权限，这里进行版本判断
-            List<String> mPermissionList = new LinkedList<>();
-            for (int i = 0; i < permissions.length; i++) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this, permissions[i])
-                        != PackageManager.PERMISSION_GRANTED) {
-                    mPermissionList.add(permissions[i]);
-                }
-            }
-
-            //非初次进入App且已授权
-            if (mPermissionList.isEmpty()) {
-                List<AppContact> contacts = ContactTool.listAllContacts(MainActivity.this);
-                showContacts(contacts.toString());
-                Toast.makeText(this, "已授权", Toast.LENGTH_SHORT).show();
-            } else {
-                //请求权限方法
-                String[] permissionsNew = mPermissionList.toArray(new String[mPermissionList.size()]);//将List转为数组
-                ActivityCompat.requestPermissions(MainActivity.this, permissionsNew, 1); //这个触发下面onRequestPermissionsResult这个回调
-            }
-        }
-    }
+//
 
     //========================== 第2个测试 END================================
 
 
-    //========================== 第一个测试 START================================
-
-//    /**
-//     * 第一个测试，渲染一个
-//     */
-//    private void listAllContactAndShowByTextViewExample1() {
-//        //加载渲染主图
-//        setContentView(R.layout.activity_test_textview);
-//        //测试方法
-//        //UserService.listAllNumber(this);
-//        ListView userListView = (ListView) findViewById(R.id.listView1);
-//        BaseAdapter adapter = new MyContactListViewAdapter(ContactDataProvider.listAllNumber(this), this);
-//        userListView.setAdapter(adapter);
-//    }
-
-    //========================== 第一个测试 END================================
-//    public static void main(String[] args) {
-//        if(BuildConfig.DEBUG.)
-//    }
 }
 
 

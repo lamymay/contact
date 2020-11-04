@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
 
-        tools:context=".activity.ContactActivity">
+    tools:context=".MainActivity">
     <!--
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
@@ -16,35 +15,69 @@
 
         -->
 
+    <!--同步-->
+    <Button
+        android:id="@+id/syncBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerHorizontal="true"
+        android:text="同步" />
+
+
     <EditText
-            android:id="@+id/input1"
-            android:text="3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/crudLayout"
-            />
+        android:id="@+id/inputCommand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/syncBtn"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
+        android:text="sync" />
+
+    <TextView
+        android:id="@+id/outputText"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inputCommand"
+        android:layout_centerHorizontal="true"
+        android:hint="显示联系人信息"
+
+        />
 
     <!-- 数据展示区-->
     <RelativeLayout
-        android:id="@+id/crudLayout"
+        android:id="@+id/dataShow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:layout_below="@id/outputText"
         android:clipChildren="false"
-        >
+        android:gravity="center_vertical">
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true" />
 
 
-        <!--            android:layout_alignParentLeft="true"-->
-        <!--            android:layout_alignParentTop="true"-->
+        <!--       <ScrollView
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_below="@id/dataShow"
+
+                   android:layout_centerHorizontal="true"
+                   >
+    </ScrollView>
+-->
 
 
-        <!--同步-->
-        <Button
-            android:id="@+id/syncBtn"
-            android:text="sync"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            />
+    </RelativeLayout>
+
+
+    <!--            android:layout_alignParentLeft="true"-->
+    <!--            android:layout_alignParentTop="true"-->
+
 
     <!--    &lt;!&ndash;保存&ndash;&gt;
         <Button
@@ -87,22 +120,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_alignParentRight="true"
             />-->
-    </RelativeLayout>
 
-    <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/input1"
-            >
-
-        <TextView
-                android:id="@+id/outputText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="显示联系人信息"
-                android:layout_below="@id/input1"
-                />
-    </ScrollView>
 
     <!--
        android:padding="7dp"
