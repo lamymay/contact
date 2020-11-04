@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.text.Editable;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -48,21 +49,14 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity {
 
+    // 同步按钮
+    Button syncButton = null;
 
-    //输入框
+    // 输入框
     private EditText input1;
 
-    Button syncButton = null;
-//    Button saveButton = null;
-//    Button deleteButton = null;
-//    Button updateButton = null;
-//    Button getButton = null;
-//    Button listAllButton = null;
-
-    //private static final String TAG = "Contact_Test";
-
-    //permission
-//    private static final int PERMISSION_CONTACT = 1;
+    // 数据输出展示的地方
+    private TextView outputText;
 
 
     /**
@@ -70,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
      */
     ContactDataProvider dataProvider = new ContactDataProvider();
 
-    //数据输出展示的地方
-    private TextView outputText;
 
     /**
      * 程序入口
@@ -81,113 +73,134 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 第一个测试
-        //listAllContactAndShowByTextViewExample1();
 
-        // 第二个测试 查询全部数据
+        //加载渲染主图
         setContentView(R.layout.activity_contact);
-
-
-        Toast.makeText(MainActivity.this, "即将init", Toast.LENGTH_SHORT).show();
-
         //初始化
-        initContact();
+        initButton();
+        initOutput();
+        initInput();
 
+
+        //showAllContactInTextView();
+
+    }
+
+    private void initOutput() {
+        outputText = findViewById(R.id.outputText);
+        Toast.makeText(MainActivity.this, "outputText init success", Toast.LENGTH_SHORT).show();
+    }
+
+    private void initInput() {
+        //todo 打开一个页面要求用户输入
         input1 = findViewById(R.id.inputCommand);
+        String name = input1.getText().toString();
+        System.out.println(name);
+        Toast.makeText(MainActivity.this, "inputCommand init success, getText= " + input1.getText(), Toast.LENGTH_SHORT).show();
 
     }
 
 
     /**
-     * 第一个测试，渲染一个
+     * init layout  with method
+     * sync
+     * 0、提示是同步方案
+     * 1、远程覆盖本地
+     * 2、远程被本地覆盖
+     * 3、合并后处理      【暂时使用该方案，且有server完成】
+     * 4、
      */
-    private void listAllContactAndShowInTextView() {
-        //加载渲染主图
-        setContentView(R.layout.activity_test_textview);
-        //测试方法
-        //UserService.listAllNumber(this);
-        ListView userListView = (ListView) findViewById(R.id.listView1);
-        BaseAdapter adapter = new MyContactListViewAdapter(ContactDataProvider.listAllNumber(this), this);
-        userListView.setAdapter(adapter);
-    }
-
-
-    //init layout  with method
-    private void initContact() {
-        // 写几个按钮，对于不同按钮分别绑定crud是事件
+    private void initButton() {
+        // 找到按钮
         syncButton = findViewById(R.id.syncBtn);
-//        saveButton = findViewById(R.id.saveBtn);
-//        deleteButton = findViewById(R.id.deleteBtn);
-//        updateButton = findViewById(R.id.updateBtn);
-//        getButton = findViewById(R.id.getOneBtn);
-//        listAllButton = findViewById(R.id.listAllBtn);
 
-
-        outputText = findViewById(R.id.outputText);
-
-        //todo 打开一个页面要求用户输入
-        String name = input1.getText().toString();
-        System.out.println(name);
-        Toast.makeText(MainActivity.this, "输入文本name\n" + name, Toast.LENGTH_SHORT).show();
-
-//        if("save".equals(name)){
-//            saveButton=syncButton;
-//        } else if ("del".equals(name)) {
-//            deleteButton=syncButton;
-//        }else if ("update".equals(name)) {
-//            updateButton=syncButton;
-//        }else if ("get".equals(name)) {
-//            getButton=syncButton;
-//        }
-//        else if ("list".equals(name)) {
-//            listAllButton=syncButton;
-//        }
-
-        //绑定事件
-
-        /*
-         * sync
-         * 0、提示是同步方案
-         * 1、远程覆盖本地
-         * 2、远程被本地覆盖
-         * 3、合并后处理      【暂时使用该方案，且有server完成】
-         * 4、
-         */
+        // 绑定事件
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sync();
+                syncButtonOnClick();
             }
         });
+
 
     }
 
 
-    //------------------------------
-
-
-    /**
-     *
-     */
-    private void sync() {
+    private void syncButtonOnClick() {
         try {
-            // 1 listAll
-            // 2 save batch data to local database
+            // 输入值
+            String inputText = input1.getText().toString();
 
-            // 1、list
-            List<AppContact> contacts = dataProvider.listMockDataList();
-            verifyContacts(contacts);
-
-            int insertSuccess = 0;
-            for (AppContact contact : contacts) {
-                boolean save = dataProvider.save(contact, MainActivity.this);
-                if (save) {
-                    insertSuccess = insertSuccess + 1;
-                }
+            if ("sync".equals(inputText)) {
+                sync();
+            } else if ("save".equals(inputText)) {
+                save();
+            } else if ("del".equals(inputText)) {
+                del();
+            } else if ("update".equals(inputText)) {
+                update();
+            } else if ("get".equals(inputText)) {
+                get();
+            } else if ("listAll".equals(inputText)) {
+                listAll();
+            } else if ("getByHttp".equals(inputText)) {
+                listByApi1();
+            } else if ("hello".equals(inputText)) {
+                show("Hello!");
             }
 
-            Toast.makeText(MainActivity.this, "保存成功" + insertSuccess, Toast.LENGTH_SHORT).show();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            //todo error
+        }
+
+    }
+
+    private void sync() {
+        Toast.makeText(MainActivity.this, "sync", Toast.LENGTH_SHORT).show();
+
+        // 1 listAll
+        // 2 save batch data to local database
+        // 1、list
+        List<AppContact> contacts = dataProvider.listMockDataList();
+        verifyContacts(contacts);
+
+        int insertSuccess = 0;
+        for (AppContact contact : contacts) {
+            boolean save = dataProvider.save(contact, MainActivity.this);
+            if (save) {
+                insertSuccess = insertSuccess + 1;
+            }
+        }
+
+        Toast.makeText(MainActivity.this, "保存成功" + insertSuccess, Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void del() {
+        Toast.makeText(MainActivity.this, "del", Toast.LENGTH_SHORT).show();
+    }
+
+    private void save() {
+        Toast.makeText(MainActivity.this, "save", Toast.LENGTH_SHORT).show();
+    }
+
+    private void get() {
+        Toast.makeText(MainActivity.this, "get", Toast.LENGTH_SHORT).show();
+    }
+
+    private void listAll() {
+        Toast.makeText(MainActivity.this, "listAll", Toast.LENGTH_SHORT).show();
+    }
+
+    private void update() {
+        Toast.makeText(MainActivity.this, "update", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void listByApi1() {
+        Toast.makeText(MainActivity.this, "listByApi1", Toast.LENGTH_SHORT).show();
 
 //        List<AppContact> contacts = listAll3();
 //
@@ -316,12 +329,8 @@ public class MainActivity extends AppCompatActivity {
 //        System.out.println("################## END ######################");
 //        System.out.println("################## END ######################");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            //todo error
-        }
-
     }
+
 
     private void verifyContacts(List<AppContact> contacts) {
         if (contacts == null && contacts.size() == 0) {
@@ -331,39 +340,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 展示
+     * debug 调试展示数据
      *
-     * @param result
+     * @param data
      */
-    private void show(final String result) {
-        //todo 返回数据的处理
-        System.out.println(result);
-
+    private void show(final String data) {
         //因为在 Android 中不允许在子线程中执行 UI 操作，所以我们通过 runOnUiThread 方法，切换为主线程，然后再更新 UI 元素
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                outputText.setText(result);
+                outputText.setText(data);
             }
         });
     }
 
-    //========================== 第2个测试 START================================
 
-
-
-
-//    private void listAll() {
-//        onClick = findViewById(R.id.button);
-//        showContact = findViewById(R.id.text);
-//        onClick.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String[] permissList = {Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE};
-//                addPermissByPermissionList(MainActivity.this, permissList, PERMISSION_CONTACT);
-//            }
-//        });
+    //    /**
+//     * debug渲染文本
+//     */
+//    private void showAllContactInTextView() {
+//        //测试方法
+//        //UserService.listAllNumber(this);
+////        ListView userListView = (ListView) findViewById(R.id.listView1);
+////        BaseAdapter adapter = new MyContactListViewAdapter(ContactDataProvider.listAllNumber(this), this);
+////        userListView.setAdapter(adapter);
+//
 //    }
+
 
     private void showContacts(String msg) {
         outputText.setText(msg);
@@ -390,26 +393,12 @@ public class MainActivity extends AppCompatActivity {
         //同意权限做的处理,开启服务提交通讯录
         if (hasAllGranted) {
             List<AppContact> contacts = ContactTool.listAllContacts(MainActivity.this);
-            showContacts(contacts.toString());
+//            showContacts(contacts.toString());
             Toast.makeText(this, "APP拥有的确认授权" + (Arrays.toString(grantResults)), Toast.LENGTH_SHORT).show();
         } else {
             //拒绝授权做的处理，弹出弹框提示用户授权
             dealWithDeniedPermission(MainActivity.this, permissions[0]);
         }
-
-//        switch (requestCode) {
-//             其实就是1,1就是允许
-//            case PackageManager.COMPONENT_ENABLED_STATE_ENABLED:
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    readContacts();
-//                } else {
-//                    Toast.makeText(this, "获取联系人权限失败", Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//            default:
-//                Toast.makeText(this, "联系人权限异常了走了 default 分支", Toast.LENGTH_SHORT).show();
-//
-//        }
 
 
     }
@@ -436,12 +425,54 @@ public class MainActivity extends AppCompatActivity {
                     }).show();
         }
     }
-//
-
-    //========================== 第2个测试 END================================
 
 
 }
 
 
+//        switch (requestCode) {
+//             其实就是1,1就是允许
+//            case PackageManager.COMPONENT_ENABLED_STATE_ENABLED:
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    readContacts();
+//                } else {
+//                    Toast.makeText(this, "获取联系人权限失败", Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+//            default:
+//                Toast.makeText(this, "联系人权限异常了走了 default 分支", Toast.LENGTH_SHORT).show();
+//
+//        }
 
+
+//    private void listAll() {
+//        onClick = findViewById(R.id.button);
+//        showContact = findViewById(R.id.text);
+//        onClick.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String[] permissList = {Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE};
+//                addPermissByPermissionList(MainActivity.this, permissList, PERMISSION_CONTACT);
+//            }
+//        });
+//    }
+
+
+//        saveButton = findViewById(R.id.saveBtn);
+//        deleteButton = findViewById(R.id.deleteBtn);
+//        updateButton = findViewById(R.id.updateBtn);
+//        getButton = findViewById(R.id.getOneBtn);
+//        listAllButton = findViewById(R.id.listAllBtn);
+
+
+//    Button saveButton = null;
+//    Button deleteButton = null;
+//    Button updateButton = null;
+//    Button getButton = null;
+//    Button listAllButton = null;
+
+
+//private static final String TAG = "Contact_Test";
+
+//permission
+//    private static final int PERMISSION_CONTACT = 1;
