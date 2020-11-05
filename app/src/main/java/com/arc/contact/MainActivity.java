@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 import com.alibaba.fastjson.JSON;
 import com.arc.contact.util.ContactDataProvider;
 import com.arc.contact.model.AppContact;
+import com.arc.contact.util.ContactTest;
 import com.arc.contact.util.ContactTool;
 
 import java.util.ArrayList;
@@ -68,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 程序入口
      *
-     * @param savedInstanceState
+     * @param bundle
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
 
         //加载渲染主图
         setContentView(R.layout.activity_contact);
@@ -183,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void save() {
-        Toast.makeText(MainActivity.this, "save", Toast.LENGTH_SHORT).show();
+        boolean result = new ContactTest().save(this,outputText);
+        Toast.makeText(MainActivity.this, "save:" + result, Toast.LENGTH_SHORT).show();
+
     }
 
     private void get() {

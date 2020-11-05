@@ -60,6 +60,34 @@ git push -u origin --tags
 
 
 
+grale sync 错误
+
+gradle-wrapper.properties
+
+
+下表列出了各个 Android Gradle 插件版本所需的 Gradle 版本。为了获得最佳性能，您应使用 Gradle 和插件这两者的最新版本。
+
+插件版本	所需的 Gradle 版本
+1.0.0 - 1.1.3	2.2.1 - 2.3
+1.2.0 - 1.3.1	2.2.1 - 2.9
+1.5.0	2.2.1 - 2.13
+2.0.0 - 2.1.2	2.10 - 2.13
+2.1.3 - 2.2.3	2.14.1+
+2.3.0+	3.3+
+3.0.0+	4.1+
+3.1.0+	4.4+
+3.2.0 - 3.2.1	4.6+
+3.3.0 - 3.3.3	4.10.1+
+3.4.0 - 3.4.3	5.1.1+
+3.5.0 - 3.5.4	5.4.1+
+3.6.0 - 3.6.4	5.6.4+
+4.0.0+	6.1.1+
+4.1.0+	6.5+
+您可以在 Android Studio 的 File > Project Structure > Project 菜单中指定 Gradle 版本，也可以通过在 gradle/wrapper/gradle-wrapper.properties 文件中修改 Gradle 分发引用来指定。以下示例在 gradle-wrapper.properties 文件中将 Gradle 的版本设置为 6.1.1。
+
+
+
+
 
 
 

@@ -27,6 +27,10 @@ import java.util.List;
  */
 public class ContactDataProvider {
 
+    public static AppContact get() {
+        return  AppContact.getMockData();
+    }
+
     /**
      * 提供测试数据
      *

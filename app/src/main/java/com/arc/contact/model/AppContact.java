@@ -2,6 +2,7 @@ package com.arc.contact.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -62,6 +63,11 @@ public class AppContact {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
+    }
+
+    public static AppContact getMockData() {
+        AppContact contact = new AppContact("姓", "名", Arrays.asList("13612345678", "18612345678"), Arrays.asList("13612345678@qq.com", "lamymay@out.com"));
+        return contact;
     }
 
     public Integer getId() {
