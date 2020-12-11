@@ -1,42 +1,26 @@
 package com.arc.contact;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.ContactsContract;
+import android.os.Bundle;
 import android.provider.Settings;
-import android.text.Editable;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.alibaba.fastjson.JSON;
-import com.arc.contact.util.ContactDataProvider;
 import com.arc.contact.model.AppContact;
+import com.arc.contact.util.ContactDataProvider;
 import com.arc.contact.util.ContactTest;
 import com.arc.contact.util.ContactTool;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -184,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void save() {
-        boolean result = new ContactTest().save(this,outputText);
+        boolean result = new ContactTest().save(this, outputText);
         Toast.makeText(MainActivity.this, "save:" + result, Toast.LENGTH_SHORT).show();
 
     }
@@ -428,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
                     }).show();
         }
     }
+
 
 
 }
