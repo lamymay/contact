@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <!--文本显示-->
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:gravity="center"
+              android:textSize="48sp"
+              android:text="test TextView"
+    />
+    <!--按钮-->
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/testBtn"
+            android:textSize="40sp"
+            android:text="点我改变进度条"/>
+    <!--输入框相当于HTML中的input框-->
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:hint="请输入"
+              android:id="@+id/testEditText"
+              android:textSize="30sp"
+    />
+    <!--图片类渲染 相当与HTML中的IMG-->
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_launcher_background"
+            android:id="@+id/imageView"/>
+<!--
+    <Switch
+            android:text="Switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/switch1"/>
+-->
+
+<!-- 圆的-->
+        <ProgressBar
+                android:layout_width="200px"
+                android:layout_height="200px"
+                android:id="@+id/processBar1"
+                android:progress="0"
+                android:max="100"
+                style="@style/Widget.AppCompat.ProgressBar"
+
+        />
+
+
+
+    <!-- 长条的-->
+    <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/processBar2"
+            android:progress="0"
+            android:max="100"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+    />
+    <!--
+        <Button
+                android:id="@+id/button2"
+                android:layout_width="457dp"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Button"/>
+        <Button
+                android:id="@+id/button3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Button"/>
+        -->
+
+</LinearLayout>
